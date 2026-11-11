@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="my"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>မြန်မာထီ ဆုမဲစစ်ဆေးရေး စနစ်</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Pyidaungsu:wght@400;700&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>body{font-family:'Pyidaungsu','Inter','Myanmar Text',sans-serif}</style></head>
+<body class="bg-gradient-to-br from-slate-50 to-emerald-50 min-h-screen text-slate-800">
+<div id="gate" class="min-h-screen flex items-center justify-center px-4">
+ <div class="bg-white rounded-3xl p-8 shadow-xl shadow-slate-100 border border-slate-100 w-full max-w-sm text-center">
+  <div class="inline-flex items-center justify-center bg-emerald-600 text-white w-16 h-16 rounded-2xl shadow-lg shadow-emerald-200 mb-3 text-2xl"><i class="fa-solid fa-key"></i></div>
+  <h1 class="text-xl font-bold text-slate-900">ဝင်ရောက်ရန် Key ထည့်ပါ</h1>
+  <p id="gmsg" class="text-sm text-slate-500 mt-2">ခဏစောင့်ပါ...</p>
+  <form id="gform" class="hidden mt-4 space-y-3" onsubmit="login(event)">
+   <input id="gk" autocomplete="off" autocapitalize="characters" placeholder="XXXX-XXXX-XXXX" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-center font-mono text-lg tracking-widest uppercase focus:outline-none focus:ring-2 focus:ring-emerald-500">
+   <button class="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-xl shadow-md shadow-emerald-200">ဝင်မည်</button>
+  </form>
+  <p class="text-xs text-slate-400 mt-4">Key မရှိပါက ဆိုင်ရှင်ထံ တောင်းခံပါ</p>
+ </div>
+</div>
+<div id="app" class="hidden max-w-4xl mx-auto px-4 py-6 sm:py-10 space-y-6">
+<header class="text-center">
+ <div class="inline-flex items-center justify-center bg-emerald-600 text-white w-16 h-16 rounded-2xl shadow-lg shadow-emerald-200 mb-3 text-2xl"><i class="fa-solid fa-ticket"></i></div>
+ <h1 class="text-2xl sm:text-3xl font-bold text-slate-900">ထီဆိုင် ဆုမဲစစ်ဆေးရေး စနစ်</h1>
+ <p class="text-slate-500 text-sm mt-1">ထီနံပါတ် ရိုက်ထည့်ပြီး ပေါက်/မပေါက် လွယ်ကူစွာ စစ်ဆေးပါ</p>
+</header>
+
+<div id="hl" class="hidden bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-400 text-amber-950 rounded-3xl p-6 text-center shadow-xl shadow-amber-200 border border-amber-300">
+ <p class="text-sm font-semibold"><i class="fa-solid fa-star"></i> ယခုလ <i class="fa-solid fa-star"></i></p>
+ <p id="hn" class="text-2xl sm:text-4xl font-bold mt-1"></p>
+ <p id="hs" class="text-sm mt-2 font-semibold"></p>
+</div>
+
+<section class="bg-white rounded-3xl p-6 shadow-xl shadow-slate-100 border border-slate-100">
+ <h2 class="text-lg font-bold mb-3"><i class="fa-solid fa-calendar-check text-emerald-600"></i> ထီဖွင့်ပွဲ အကြိမ်ရေ ရွေးပါ</h2>
+ <select id="sel" onchange="pick()" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-lg font-bold"><option>ဖတ်နေသည်...</option></select>
+ <p class="text-xs text-slate-400 mt-2">"အကြိမ်အားလုံး" ဆိုလျှင် တစ်နှစ်စာလုံး ရှာပေးပါမည် (ဖတ်ရန် အချိန်ယူနိုင်သည်)။</p>
+</section>
+
+<section class="bg-white rounded-3xl p-6 sm:p-8 shadow-xl shadow-slate-100 border border-slate-100">
+ <h2 class="text-lg font-bold mb-4"><i class="fa-solid fa-barcode text-emerald-600"></i> ထီနံပါတ် ရိုက်ထည့်ပါ</h2>
+ <div class="relative">
+  <i class="fa-solid fa-hashtag absolute left-4 top-5 text-slate-400"></i>
+  <input id="s" placeholder="ဥပမာ - က-၅၁၄၂၃၄" onkeydown="if(event.key==='Enter')one()" class="w-full pl-12 pr-28 py-4 bg-slate-50 border border-slate-200 rounded-2xl text-lg font-semibold focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white shadow-inner">
+  <button onclick="one()" class="absolute right-2 top-2 bottom-2 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold px-5 rounded-xl shadow-md shadow-emerald-200">စစ်မည် <i class="fa-solid fa-arrow-right"></i></button>
+ </div>
+ <p class="text-xs text-slate-400 mt-2">ထီအပြည့်အစုံ ရိုက်ပါ။ မြန်မာ/အင်္ဂလိပ် ဂဏန်း နှစ်မျိုးလုံး ရပြီး "-" ထည့်/မထည့် ရပါသည်။</p>
+</section>
+
+<div id="res" class="hidden"></div>
+
+<section class="bg-white rounded-3xl p-6 sm:p-8 shadow-xl shadow-slate-100 border border-slate-100">
+ <h2 class="text-lg font-bold mb-1"><i class="fa-solid fa-file-excel text-emerald-600"></i> ဖိုင်လိုက် စစ်ရန် (.xlsx / .csv / .txt)</h2>
+ <p class="text-xs text-slate-400 mb-3">ပထမကော်လံတွင် ထီနံပါတ်အပြည့်အစုံများ ထားပါ</p>
+ <input type="file" id="f" accept=".xlsx,.xls,.csv,.txt" class="block w-full text-sm file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:bg-emerald-600 file:text-white">
+ <div id="sum" class="mt-4"></div>
+ <div class="overflow-x-auto"><table id="t" class="w-full text-left text-sm"></table></div>
+</section>
+
+<section class="bg-white rounded-3xl p-6 sm:p-8 shadow-xl shadow-slate-100 border border-slate-100">
+ <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+  <h2 class="text-lg font-bold"><i class="fa-solid fa-clipboard-list text-emerald-600"></i> ပေါက်မဲစာရင်း (<span id="lc">0</span>)</h2>
+  <input id="lq" oninput="list()" placeholder="နံပါတ်ရှာရန်..." class="px-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm">
+ </div>
+ <div class="overflow-x-auto"><table id="lt" class="w-full text-left text-sm"></table></div>
+ <p class="text-xs text-slate-400 mt-2">အတန်း ၃၀၀ အထိသာ ပြထားသည် - နံပါတ်ရှာ၍ ကြည့်ပါ။ ရှေ့ဂဏန်းသာပါသော စာရင်းသည် ထိုဂဏန်းဖြင့်စသော ထီအားလုံး ပေါက်ပါသည်။</p>
+</section>
+</div>
+<script>
+const MM='၀၁၂၃၄၅၆၇၈၉';
+const key=s=>String(s??'').replace(/[၀-၉]/g,c=>MM.indexOf(c)).replace(/[\s\-\/.]/g,'').toUpperCase();
+const amt=p=>{const s=String(p).replace(/[၀-၉]/g,c=>MM.indexOf(c)).replace(/,/g,''),n=+((s.match(/\d+(\.\d+)?/)||[0])[0]);return n*(s.includes('သိန်း')?1e5:s.includes('သောင်း')?1e4:1)};
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const C={}; // draw -> {items, idx}
+let draws=[];
+async function load(d){
+ if(C[d])return;
+ const r=await fetch(`draw-${d}.json?t=${Date.now()}`);if(!r.ok)throw new Error(d);
+ const items=(await r.json()).items,idx=new Map();
+ items.forEach(x=>{const k=key(x[0]);if(!idx.has(k))idx.set(k,[]);idx.get(k).push(x)});
+ C[d]={items,idx};
+}
+const toMM=n=>String(n).replace(/\d/g,d=>MM[d]);
+const sel_=()=>sel.value==='all'?draws:[+sel.value];
+async function ensure(){const l=sel_();await Promise.all(l.map(load));return l}
+function find(k,l){const out=[],L=/^[က-အ]\d/.test(k)?1:0;if(!L)return out;
+ for(const d of l){const c=C[d];if(!c)continue;
+  for(let n=L+1;n<=k.length;n++){const m=c.idx.get(k.slice(0,n));if(m)m.forEach(x=>out.push({d,n:x[0],p:x[1],full:n===k.length,dg:n-L}))}}
+ return out.sort((a,b)=>amt(b.p)-amt(a.p))}
+async function pick(){lc.textContent='...';try{await ensure()}catch(e){lt.innerHTML='<tr><td class="p-4 text-rose-500">ဖိုင်ဖတ်မရပါ</td></tr>';return}res.className='hidden';list();
+ hs.textContent=sel.value==='all'?'အကြိမ်အားလုံးကို စစ်ဆေးနေသည်':(sel.value==draws[0]?'':`ယခု ရွေးထားသည် - (${toMM(sel.value)}) ကြိမ်မြောက်`)}
+function list(){const l=sel_(),q=key(lq.value);let r=[];
+ l.forEach(d=>C[d]&&C[d].items.forEach(x=>{if(!q||key(x[0]).includes(q))r.push({d,n:x[0],p:x[1]})}));
+ r.sort((a,b)=>amt(b.p)-amt(a.p)||b.d-a.d);lc.textContent=r.length;
+ lt.innerHTML='<tr class="text-slate-400 text-xs border-b"><th class="p-2">စဉ်</th><th class="p-2">ထီဂဏန်း</th><th class="p-2">ဆုအမျိုးအစား</th><th class="p-2">အကြိမ်ရေ</th></tr>'+
+ (r.slice(0,300).map((x,i)=>`<tr class="border-b border-slate-100"><td class="p-2 text-slate-400">${i+1}</td><td class="p-2 font-mono font-bold">${esc(x.n)}</td><td class="p-2"><span class="px-2.5 py-1 rounded-full text-xs bg-emerald-100 text-emerald-800">${esc(x.p)}</span></td><td class="p-2 font-semibold">${x.d}</td></tr>`).join('')||'<tr><td colspan="4" class="p-6 text-center text-slate-400">စာရင်းမရှိသေးပါ</td></tr>')}
+(async()=>{
+ try{const r=await fetch('index.json?t='+Date.now());if(!r.ok)throw 0;draws=(await r.json()).draws.sort((a,b)=>b-a)}catch(e){sel.innerHTML='<option>စာရင်း မရှိသေးပါ</option>';return}
+ sel.innerHTML=draws.map((d,i)=>`<option value="${d}">အကြိမ် ${d}${i?'':' (နောက်ဆုံး)'}</option>`).join('')+'<option value="all">အကြိမ်အားလုံး</option>';
+ hn.textContent=`(${toMM(draws[0])}) ကြိမ်မြောက် ထီပေါက်စဉ်`;hl.classList.remove('hidden');
+ pick()})();
+async function one(){
+ const raw=s.value.trim(),k=key(raw);if(!k)return;
+ if(!/^[က-အ]\d+$/.test(k))return alert('ဗျည်း (က-အ) တစ်လုံးနှင့် ဂဏန်း အပြည့်အစုံ ရိုက်ပါ (ဥပမာ က-၅၁၄၂၃၄)');
+ let l;try{l=await ensure()}catch(e){return alert('စာရင်းဖတ်မရပါ')}
+ const m=find(k,l),r=document.getElementById('res');r.className='';
+ r.innerHTML=m.length?`<div class="bg-gradient-to-r from-emerald-500 to-teal-600 rounded-3xl p-6 sm:p-8 text-white shadow-xl shadow-emerald-200 flex items-center gap-4">
+  <div class="w-16 h-16 bg-white text-emerald-600 rounded-2xl flex items-center justify-center text-3xl shrink-0"><i class="fa-solid fa-trophy"></i></div>
+  <div><p class="text-2xl font-bold">🎉 ဂုဏ်ယူပါတယ်! ဆုပေါက်ပါသည်</p>${m.map(x=>`<p class="mt-1 text-lg">အကြိမ် ${x.d} - <b>${esc(x.p)}</b> <span class="text-emerald-100 text-sm">(${esc(x.n)} - ${x.full?'အပြည့်အစုံတူ':'အက္ခရာနှင့် ရှေ့ဂဏန်း '+x.dg+' လုံးတူ'})</span></p>`).join('')}</div></div>`
+ :`<div class="bg-white border border-rose-200 rounded-3xl p-6 sm:p-8 shadow-xl shadow-slate-100 flex items-center gap-4">
+  <div class="w-16 h-16 bg-rose-100 text-rose-500 rounded-2xl flex items-center justify-center text-3xl shrink-0"><i class="fa-regular fa-face-frown"></i></div>
+  <div><p class="text-xl font-bold">မပေါက်ပါ</p><p class="text-slate-500 text-sm mt-1"><span class="font-mono">${esc(raw)}</span> သည် ရွေးထားသော အကြိမ်တွင် မတွေ့ပါ။</p></div></div>`;
+}
+f.onchange=async e=>{const file=e.target.files[0];if(!file)return;let nums,l;
+ try{l=await ensure();
+ if(/\.txt$/i.test(file.name))nums=(await file.text()).split(/[\n,;]+/);
+ else{const wb=XLSX.read(await file.arrayBuffer(),{type:'array'});nums=XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]],{header:1}).map(r=>r[0])}}
+ catch(err){return alert('ဖိုင်/စာရင်း ဖတ်မရပါ')}
+ nums=nums.map(x=>String(x??'').trim()).filter(Boolean);
+ if(nums.length&&/number|နံပါတ်|ထီ/i.test(nums[0]))nums.shift();
+ const rows=nums.map(n=>({n,m:find(key(n),l)})).sort((a,b)=>amt(b.m[0]?.p)-amt(a.m[0]?.p)),w=rows.filter(r=>r.m.length).length;
+ sum.innerHTML=`<div class="rounded-2xl p-4 ${w?'bg-emerald-50 text-emerald-800':'bg-slate-50 text-slate-600'} font-bold">စုစုပေါင်း ${rows.length} စောင် - ပေါက် ${w} စောင်</div>`;
+ t.innerHTML='<tr class="text-slate-400 text-xs border-b"><th class="p-2">နံပါတ်</th><th class="p-2">ရလဒ်</th></tr>'+rows.map(r=>
+ `<tr class="${r.m.length?'bg-emerald-50 font-semibold':''} border-b border-slate-100"><td class="p-2 font-mono">${esc(r.n)}</td><td class="p-2">${r.m.length?r.m.map(x=>'🎉 အကြိမ် '+x.d+' - '+esc(x.p)).join('<br>'):'<span class="text-slate-400">မပေါက်</span>'}</td></tr>`).join('')};
+
+// ---- Login key gate ----
+const hex=b=>[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('');
+const unhex=h=>new Uint8Array(h.match(/../g).map(x=>parseInt(x,16)));
+async function kdf(secret,saltHex){const k=await crypto.subtle.importKey('raw',new TextEncoder().encode(secret),'PBKDF2',false,['deriveBits']);
+ return hex(await crypto.subtle.deriveBits({name:'PBKDF2',hash:'SHA-256',salt:unhex(saltHex),iterations:100000},k,256))}
+async function verify(k,list){
+ k=String(k).toUpperCase().replace(/[^A-Z0-9]/g,'');if(k.length!==12)return 'bad';
+ const e=list.find(x=>x.i===k.slice(0,4));if(!e)return 'bad';
+ if(e.e&&new Date(e.e+'T23:59:59')<new Date())return 'exp';
+ return (await kdf(k.slice(4),e.s))===e.h?'ok':'bad'}
+const REQUIRE_KEY=true; // true = keys.json မရှိ/ဗလာ ဖြစ်နေလျှင် မည်သူမျှ ဝင်မရ (လုံခြုံ)
+let KL=[];
+const openApp=()=>{gate.classList.add('hidden');app.classList.remove('hidden')};
+const gerr=m=>{gmsg.textContent=m;gmsg.className='text-sm text-rose-600 mt-2 font-semibold'};
+async function login(ev){ev.preventDefault();gmsg.className='text-sm text-slate-500 mt-2';gmsg.textContent='စစ်ဆေးနေသည်...';
+ const r=await verify(gk.value,KL);
+ if(r==='ok'){localStorage.setItem('lk',gk.value);openApp()}else gerr(r==='exp'?'Key သက်တမ်းကုန်ပြီးပါပြီ':'Key မမှန်ပါ')}
+(async()=>{
+ let res=null;try{res=await fetch('keys.json?t='+Date.now(),{cache:'no-store'})}catch(e){}
+ const saved=localStorage.getItem('lk');
+ if(res&&res.status===404)return REQUIRE_KEY?gerr('Login စနစ် မပြင်ဆင်ရသေးပါ - ဆိုင်ရှင်ထံ ဆက်သွယ်ပါ'):openApp();
+ if(!res||!res.ok){if(saved)return openApp();return gerr('ချိတ်ဆက်၍မရပါ - အင်တာနက် စစ်ပါ')}
+ try{KL=(await res.json()).keys||[]}catch(e){KL=[]}
+ if(!KL.length)return REQUIRE_KEY?gerr('Login စနစ် မပြင်ဆင်ရသေးပါ - ဆိုင်ရှင်ထံ ဆက်သွယ်ပါ'):openApp();
+ if(saved){const r=await verify(saved,KL);if(r==='ok')return openApp();localStorage.removeItem('lk');
+  gform.classList.remove('hidden');return gerr(r==='exp'?'Key သက်တမ်းကုန်ပြီးပါပြီ - Key အသစ် တောင်းပါ':'Key ပိတ်ထားပါသည် - ဆိုင်ရှင်ထံ မေးပါ')}
+ gmsg.textContent='Key ရိုက်ထည့်ပါ';gform.classList.remove('hidden')})();
+</script></body></html>
